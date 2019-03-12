@@ -1,5 +1,6 @@
-vis.js
-==================
+# vis.js
+
+[![Backers on Open Collective](https://opencollective.com/vis/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/vis/sponsors/badge.svg)](#sponsors) [![Join the chat at https://gitter.im/vis-js/Lobby](https://badges.gitter.im/vis-js/Lobby.svg)](https://gitter.im/vis-js/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 <a href="https://github.com/almende/vis/blob/develop/misc/we_need_help.md">
   <img align="right" src="https://raw.githubusercontent.com/almende/vis/master/misc/we_need_help.png">
@@ -20,6 +21,24 @@ The library consists of the following components:
 - Timeline. Display different types of data on a timeline.
 
 The vis.js library was initially developed by [Almende B.V](http://almende.com).
+
+## Badges
+
+[![NPM](https://nodei.co/npm/vis.png?downloads=true&downloadRank=true)](https://nodei.co/npm/vis/)
+
+[![Dependency Status](https://david-dm.org/almende/vis/status.svg)](https://david-dm.org/almende/vis)
+[![devDependency Status](https://david-dm.org/almende/vis/dev-status.svg)](https://david-dm.org/almende/vis?type=dev)
+
+[![last version on CDNJS](https://img.shields.io/cdnjs/v/vis.svg)](https://cdnjs.com/libraries/vis)
+[![GitHub contributors](https://img.shields.io/github/contributors/almende/vis.svg)](https://github.com/almende/vis/graphs/contributors)
+[![GitHub stars](https://img.shields.io/github/stars/almende/vis.svg)](https://github.com/almende/vis/stargazers)
+
+[![GitHub issues](https://img.shields.io/github/issues/almende/vis.svg)](https://github.com/almende/vis/issues)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/almende/vis.svg)](http://isitmaintained.com/project/almende/vis "Percentage of issues still open")
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/almende/vis.svg)](http://isitmaintained.com/project/almende/vis "Average time to resolve an issue")
+[![Pending Pull-Requests](http://githubbadges.herokuapp.com/almende/vis/pulls.svg)](https://github.com/almende/vis/pulls)
+
+[![Code Climate](https://codeclimate.com/github/almende/vis/badges/gpa.svg)](https://codeclimate.com/github/almende/vis)
 
 ## Install
 
@@ -192,9 +211,11 @@ exports.Timeline = require('./lib/timeline/Timeline');
 
 Then create a custom bundle using browserify, like:
 
-    $ browserify custom.js -t [ babelify --presets [es2015] ] -o dist/vis-custom.js -s vis
-    
-This will generate a custom bundle *vis-custom.js*, which exposes the namespace `vis` containing only `DataSet` and `Timeline`. The generated bundle can be minified using uglifyjs:
+    $ browserify custom.js -t [ babelify --presets [env] ] -o dist/vis-custom.js -s vis
+
+This will generate a custom bundle *vis-custom.js*, which exposes the namespace `vis` containing only `DataSet` and `Timeline`. You can pass additional options to babelify and browserify as needed (e.g. to customise the browsers that are supported).
+
+The generated bundle can be minified using uglifyjs:
 
     $ uglifyjs dist/vis-custom.js -o dist/vis-custom.min.js
 
@@ -217,7 +238,7 @@ The custom bundle can now be loaded like:
 
 The default bundle `vis.js` is standalone and includes external dependencies such as *hammer.js* and *moment.js*. When these libraries are already loaded by the application, vis.js does not need to include these dependencies itself too. To build a custom bundle of vis.js excluding *moment.js* and *hammer.js*, run browserify in the root of the project:
 
-    $ browserify index.js -t [ babelify --presets [es2015] ] -o dist/vis-custom.js -s vis -x moment -x hammerjs
+    $ browserify index.js -t [ babelify --presets [env] ] -o dist/vis-custom.js -s vis -x moment -x hammerjs
 
 This will generate a custom bundle *vis-custom.js*, which exposes the namespace `vis`, and has *moment.js* and *hammer.js* excluded. The generated bundle can be minified with uglifyjs:
 
@@ -288,35 +309,39 @@ And loaded into a webpage:
 #### Example 4: Integrate vis.js components directly in your webpack build
 
 You can integrate e.g. the timeline component directly in you webpack build.
-Therefor you just import the component-files from root direcory (starting with "index-").
+Therefor you can e.g. import the component-files from root direcory (starting with "index-").
 
 ```js
-var visTimeline = require('vis/index-timeline-graph2d');
+import { DataSet, Timeline } from 'vis/index-timeline-graph2d';
 
 var container = document.getElementById('visualization');
 var data = new DataSet();
 var timeline = new Timeline(container, data, {});
 ```
 
-To get this to work you'll need to add the some babel-loader-setting:
+To get this to work you'll need to add some babel-loader-setting to your webpack-config:
 
 ```js
 module: {
-	loaders: [{
-		test: /node_modules[\\\/]vis[\\\/].*\.js$/,
-		loader: 'babel',
-		query: {
-			cacheDirectory: true,
-			presets: ["es2015"],
-			plugins: [
-				"transform-es3-property-literals",
-				"transform-es3-member-expression-literals",
-				"transform-runtime"
-			]
-		}
-	}]
+  module: {
+    rules: [{
+      test: /node_modules[\\\/]vis[\\\/].*\.js$/,
+      loader: 'babel-loader',
+      query: {
+        cacheDirectory: true,
+        presets: [ "babel-preset-env" ].map(require.resolve),
+        plugins: [
+          "transform-es3-property-literals", // #2452
+          "transform-es3-member-expression-literals", // #2566
+          "transform-runtime" // #2566
+        ]
+      }
+    }]
+  }
 }
 ```
+
+There is also an [demo-project](https://github.com/mojoaxel/vis-webpack-demo) showing the integration of vis.js using webpack.
 
 ## Test
 
@@ -328,9 +353,39 @@ Then run the tests:
 
     $ npm run test
 
+## Contribute
+
+[Contributions](//github.com/almende/vis/blob/master/misc/how_to_help.md) to the vis.js library are very welcome! [We can't do this alone](//github.com/almende/vis/blob/master/misc/we_need_help.md).
+
+### Contributors
+
+This project exists thanks to all the people who already contributed.
+<a href="graphs/contributors"><img src="https://opencollective.com/vis/contributors.svg?width=890" /></a>
+
+### Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/vis#backer)]
+
+<a href="https://opencollective.com/vis#backers" target="_blank"><img src="https://opencollective.com/vis/backers.svg?width=890"></a>
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/vis#sponsor)]
+
+<a href="https://opencollective.com/vis/sponsor/0/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/1/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/2/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/3/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/4/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/5/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/6/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/7/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/8/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/vis/sponsor/9/website" target="_blank"><img src="https://opencollective.com/vis/sponsor/9/avatar.svg"></a>
+
 ## License
 
-Copyright (C) 2010-2017 Almende B.V. and Contributors
+Copyright (C) 2010-2018 Almende B.V. and Contributors
 
 Vis.js is dual licensed under both
 

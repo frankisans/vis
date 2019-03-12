@@ -106,6 +106,8 @@ table.events td:nth-child(2) {
 
 pre {
     margin: 20px 0;
+    white-space: pre-wrap;
+    max-width: 100%;
 }
 
 a code {
@@ -188,6 +190,15 @@ td.indent {
 td.indent2 {
     padding-left:50px !important;
 }
+
+td p:first-child {
+    margin-top: 0;
+}
+
+td p:last-child {
+    margin-bottom: 0;
+}
+
 
 pre.options {
     max-width:600px;
